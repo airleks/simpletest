@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Online Test Exam Maker</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.2/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.2/css/bootstrap.min.css}"
+          rel="stylesheet" media="screen" />
+
+    <script src="http://cdn.jsdelivr.net/webjars/jquery/2.1.3/jquery.min.js"
+            th:src="@{/webjars/jquery/2.1.3/jquery.min.js}"></script></head>
+
+    <script th:inline="javascript">
+        $( document ).ready(function()
+        {
+            var timeleft = /*[[${time_left}]]*/ 10;
+            $('#time_left').text("Time left: " + timeleft);
+
+            setInterval(function() {
+                $.get("submission/check", function( data ) {
+                    if (data.expired)
+                    {
+                        window.location.href = "submission/send";
+                    }
+                });
+            }, 2000);
+
+            setInterval(function() {
+                timeleft--;
+                if (timeleft >=0) $('#time_left').text("Time left: " + timeleft);
+            }, 1000);
+        });
+    </script>
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <span class="navbar-brand" th:text="|${user.fullname}: ${exam.name}|">Test</span>
+            </div>
+            <div class="nav navbar-nav navbar-left">
+                <p class="navbar-text" th:text="|${current}/${total}|"></p>
+                <form class="navbar-form">
+                    <select name="q">
+                        <option th:each="num : ${#numbers.sequence( 1, total)}" th:value="${num}" th:text="${num}"></option>
+                    </select>
+                    <button type="submit" class="btn btn-default">Go to</button>
+                </form>
+            </div>
+            <div class="nav navbar-nav navbar-right" >
+                <p class="navbar-text" id="time_left"></p>
+                <a class="btn btn-link" href="/submission/send">Stop Examination</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h2>Question <span th:text="${questionNum}"></span>: <span th:text="${question.title}"></span></h2>
+        <p th:text="${question.description}"></p>
+
+        <form>
+            <div th:if="${question.multiple == true}">
+                <div class="checkbox" th:each="answer,status : ${question.answers}">
+                    <label>
+                        <input type="checkbox" name="answers" th:id="|answer${answer.id}|" th:value="${status.index}" />
+                        <span th:text="${answer.text}"></span>
+                    </label>
+                </div>
+            </div>
+            <div th:if="${question.multiple == false}">
+                <div class="radio" th:each="answer,status : ${question.answers}">
+                    <label>
+                        <input type="radio" name="answers" th:id="|answer${answer.id}|" th:value="${status.index}" />
+                        <span th:text="${answer.text}"></span>
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-default">Submit answer</button>
+        </form>
+    </div>
+</body>
+</html>

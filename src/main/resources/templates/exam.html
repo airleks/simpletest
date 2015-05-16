@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Online Test Exam Maker</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.2/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.2/css/bootstrap.min.css}"
+          rel="stylesheet" media="screen" />
+</head>
+<body>
+    <div class="container">
+        <h1 th:text="${exam.name}"></h1>
+        <p th:text="${exam.description}"></p>
+        <form class="form-inline" method="post">
+            <div th:if="${error != null}" th:text="${error}" class="alert alert-danger">
+                Invalid username and password.
+            </div>
+            <div class="form-group">
+                <label for="username">User</label>
+                <input type="text" id="username" name="username" placeholder="username" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="password" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">Start</button>
+        </form>
+    </div>
+</body>
+</html>
